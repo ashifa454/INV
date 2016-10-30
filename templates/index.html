@@ -1,0 +1,90 @@
+<html>
+<head>
+<Title>INVSAL | Home</Title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<style>
+	body { padding-top: 50px; }
+	.jumbotron{
+		width: 50%;
+	}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+   	
+  </div>
+</nav><center>
+<div class="jumbotron">
+ <div class="container">
+  <h1>Hello World.</h1>
+  <p>Upload your images to be upload and download them as pdf from bottom right!</p>
+  <p><a class="btn btn-primary btn-lg" href="#" role="button" onclick="showFd()">Choose File</a></p>
+  <div id="m-body">
+  </div>
+</div>
+</center>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container" id="bottom">
+    <button type="button" class="btn btn-info navbar-btn pull-right" onclick="uploadForPdf()">Invert and download as Pdf</button>
+  </div>
+</nav>
+<form action="" method="post" enctype="multipart/form-data" style="display:none;">
+<input type="file" name="image" id="image">
+</form>
+</body>
+<script type="text/javascript">
+	var filenames=[];
+	var i=0;
+	function showFd(){
+		$('#image').trigger('click');
+	}
+	$('#image').change(function(){
+		filename=$('#image').val();
+		if(filename.includes(".png")||filename.includes(".jpg")){
+			var imgtag=document.createElement("img");
+			var reader=new FileReader();
+			reader.onload=function(e){
+				imgtag.setAttribute('src',e.target.result);
+				filenames.push(e.target.result.substr(22,e.target.result.length))
+			}
+			reader.readAsDataURL(this.files[0])
+			imgtag.setAttribute('class','img-thumbnail');
+			imgtag.setAttribute('width','150');
+			imgtag.setAttribute('height','150');
+			document.getElementById('m-body').appendChild(imgtag);
+		}
+		else{
+			alert("Invalid File Type");
+		}
+	});
+	function uploadForPdf(){
+		$.ajax({
+			type:'POST',
+			url:'/PerformInvert',
+			data: JSON.stringify(filenames, null, '\t'),
+			contentType: 'application/json;charset=UTF-8',
+			success:function(result){
+				var button=document.createElement("button")
+			button.setAttribute("type","button")
+			button.addEventListener('click',function(){
+				window.open(result);
+			});
+			button.setAttribute("class","btn btn-info navbar-btn");
+			button.innerHTML="Here is Your Link od Inverted Images!";
+			document.getElementById('bottom').appendChild(button);
+			}
+		});
+	}
+</script>
+</html>
