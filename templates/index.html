@@ -28,7 +28,7 @@
 <div class="jumbotron">
  <div class="container">
   <h1>Hello World.</h1>
-  <p>Upload your images to be upload and download them as pdf from bottom right!</p>
+  <p>Upload your images to be Invert and download them as pdf or Images from bottom right!</p>
   <p><a class="btn btn-primary btn-lg" href="#" role="button" onclick="showFd()">Choose File</a></p>
   <div id="m-body">
   </div>
@@ -36,6 +36,7 @@
 </center>
 <nav class="navbar navbar-default navbar-fixed-bottom">
   <div class="container" id="bottom">
+    <button type="button" class="btn btn-warning navbar-btn pull-left" onclick="uploadForImg()">Invert and download as Images</button>
     <button type="button" class="btn btn-info navbar-btn pull-right" onclick="uploadForPdf()">Invert and download as Pdf</button>
   </div>
 </nav>
@@ -80,7 +81,28 @@
 			button.addEventListener('click',function(){
 				window.open(result);
 			});
-			button.setAttribute("class","btn btn-info navbar-btn");
+			button.setAttribute("class","btn btn-success navbar-btn center-block");
+			button.innerHTML="Here is Your Link of Inverted Images!";
+			document.getElementById('bottom').appendChild(button);
+			}
+		});
+	}
+	function uploadForImg(){
+		$.ajax({
+			type:'POST',
+			url:'/DownloadImages',
+			data: JSON.stringify(filenames, null, '\t'),
+			contentType: 'application/json;charset=UTF-8',
+			success:function(result){
+				var button=document.createElement("button")
+			button.setAttribute("type","button")
+			button.addEventListener('click',function(){
+				names=result.split("-")
+				names.forEach(function(name){
+					window.open(name)
+				});
+			});
+			button.setAttribute("class","btn btn-success navbar-btn center-block");
 			button.innerHTML="Here is Your Link od Inverted Images!";
 			document.getElementById('bottom').appendChild(button);
 			}
